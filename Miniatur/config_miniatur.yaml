@@ -1,0 +1,46 @@
+# Konfigurasi profil MINIATUR (skala detik, wadah kecil)
+# Profil Drainase nanti cukup menyalin file ini lalu mengganti angkanya.
+
+profile: miniatur
+sampling_interval_s: 1          # satu titik data per detik
+min_length_s: 150               # panjang rekaman minimum (harus > konteks 90 + horizon 20)
+length_s: [240, 360]            # panjang rekaman maksimum (acak). Rekaman dipotong bila wadah sudah penuh.
+
+splits:                         # jumlah rekaman dan seed tiap bagian (seed beda = data beda)
+  train: {n: 301, seed: 1000}
+  val:   {n: 63,  seed: 2000}
+  test:  {n: 63,  seed: 3001}
+
+container:                      # diacak per rekaman
+  height_cm: [15, 40]
+  sensor_above_rim_cm: [30, 40]       # H_pasang = tinggi wadah + nilai ini
+  flood_fraction: [0.80, 0.90]        # ambang banjir = fraksi dari tinggi wadah
+  initial_level_fraction: [0.0, 0.4]  # tinggi air awal
+  max_fill_fraction: 0.98             # air tidak bisa melewati batas ini
+
+flow:                           # laju perubahan air (cm/detik) sebelum dikali speed_multiplier
+  speed_multiplier: [0.6, 2.0]  # sampling log-uniform; wadah sempit = pengali besar
+  phases:
+    pelan:  [0.05, 0.30]
+    sedang: [0.30, 0.70]
+    cepat:  [0.70, 1.50]
+    bocor:  [0.02, 0.10]        # air turun
+  phase_duration_s: [10, 60]
+  lead_idle_s: [95, 160]        # diam di awal sebelum tuangan pertama (memberi konteks sebelum air naik)
+  wobble: 0.30                  # seberapa bergelombang laju (tuangan tersendat)
+  wobble_tau_s: 3               # seberapa lama gelombang bertahan
+  response_tau_s: 2             # air tidak langsung naik/berhenti seketika
+
+sensor:                         # meniru AJ-SR04M
+  blind_zone_cm: 20
+  max_range_cm: 450
+  noise_sigma_cm: [0.2, 0.5]
+  pour_extra_sigma_cm: 0.4      # noise tambahan saat air dituang (riak)
+  calibration_bias_cm: 0.5      # selisih kecil antara H_pasang asli dan yang diisi
+  spike_prob: 0.005
+  dropout_prob: 0.003
+  resolution_cm: 0.1
+
+cleaning:                       # filter yang nanti juga dijalankan di backend/firmware
+  max_jump_cm: 8                # lompatan > ini dalam 1 detik dianggap spike
+  max_consecutive_rejects: 3    # kalau lompatan bertahan 3 detik, dianggap nyata

@@ -1,0 +1,55 @@
+=== VALIDASI (9986 jendela) ===
+Selisih tebakan vs tinggi asli (cm), makin kecil makin baik:
+               MAE_5s  MAE_10s  MAE_20s  RMSE_20s
+model                                            
+persistence     0.599    0.939    1.665     3.521
+linear          0.647    1.035    1.886     3.427
+random_forest   0.477    0.827    1.680     3.000
+
+MAE detik ke-20 per skenario (cm):
+                     persistence  linear  random_forest
+berhenti_berhenti          1.286   1.793          1.499
+cepat_lalu_berhenti        1.273   2.258          1.680
+cepat_terus                7.754   6.162          6.043
+diam                       0.359   0.873          1.058
+naik_lalu_bocor            1.553   1.557          1.491
+pelan_lalu_cepat           3.457   2.410          2.207
+pelan_terus                1.251   1.427          1.138
+
+Evaluasi alarm (ambang banjir, prediksi 20 detik):
+model                      persistence  linear  random_forest
+rekaman_banjir_dievaluasi         18.0   18.00          18.00
+alarm_terlewat                    18.0    7.00          12.00
+lead_time_median_dtk               NaN    8.00           8.00
+rekaman_aman                      45.0   45.00          45.00
+rekaman_alarm_palsu                0.0   14.00           7.00
+baris_alarm_palsu_%                0.0    1.78           0.73
+
+
+=== TEST (9844 jendela) ===
+Selisih tebakan vs tinggi asli (cm), makin kecil makin baik:
+               MAE_5s  MAE_10s  MAE_20s  RMSE_20s
+model                                            
+persistence     0.619    0.984    1.767     3.628
+linear          0.631    1.005    1.835     3.384
+random_forest   0.480    0.798    1.603     2.967
+
+MAE detik ke-20 per skenario (cm):
+                     persistence  linear  random_forest
+berhenti_berhenti          1.492   1.719          1.482
+cepat_lalu_berhenti        1.496   2.445          1.644
+cepat_terus                5.402   4.069          4.114
+diam                       0.395   0.738          0.983
+naik_lalu_bocor            1.475   1.650          1.299
+pelan_lalu_cepat           4.381   2.977          2.959
+pelan_terus                1.450   1.370          1.111
+
+Evaluasi alarm (ambang banjir, prediksi 20 detik):
+model                      persistence  linear  random_forest
+rekaman_banjir_dievaluasi         18.0   18.00          18.00
+alarm_terlewat                    18.0   10.00          10.00
+lead_time_median_dtk               NaN   13.50           7.50
+rekaman_aman                      45.0   45.00          45.00
+rekaman_alarm_palsu                0.0   12.00           6.00
+baris_alarm_palsu_%                0.0    1.49           0.28
+

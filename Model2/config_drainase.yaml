@@ -1,0 +1,131 @@
+# Konfigurasi profil DRAINASE (skala menit, saluran dengan hujan).
+# Versi final: mengikuti config Anda + 6 perubahan yang disepakati.
+# Perubahan dari versi Anda ditandai [UBAH] atau [BARU].
+
+profile: drainase
+sampling_interval_s: 60          # 1 titik per menit (dt simulasi = 1 menit)
+context_points: 120              # riwayat yang dilihat model: 2 jam
+horizon_points: 30               # prediksi ke depan: 30 menit
+max_length_min: 4320             # [UBAH] batas atas panjang rekaman (3 hari). Panjang asli = jeda awal + kejadian + ekor surut
+
+splits:                          # [UBAH] 7 skenario, n kelipatan 7 -> val/test masing-masing 4 rekaman per skenario
+  train: {n: 140, seed: 5000}
+  val:   {n: 28,  seed: 6000}
+  test:  {n: 28,  seed: 7000}
+
+channel:                         # diacak per saluran
+  depth_cm: [50, 150]
+  sensor_above_rim_cm: [30, 60]
+  flood_fraction: [0.80, 0.90]
+  base_level_fraction: [0.03, 0.12]
+  wander_fraction: [0.005, 0.02]
+  wander_tau_min: 600            # [BARU] skala waktu naik-turun lambat aliran dasar
+
+hydrology:
+  k1_min: [4, 30]
+  k2_min: [10, 120]
+  k_slow_min: [90, 400]
+  slow_weight: [0.10, 0.35]
+  delay_min: [0, 10]
+  rating_exponent: [0.5, 0.75]
+  runoff_coeff_dry: [0.40, 0.70]
+  runoff_coeff_wet: [0.80, 0.95]
+  wetness_capacity_mm: [15, 40]
+  wetness_decay_min: [720, 2880]
+  initial_wetness_fraction: [0.0, 0.3]   # [BARU] kelembapan tanah awal (fraksi kapasitas)
+  # [BARU] catchment_gain (luas tangkapan efektif) TIDAK diundi langsung, tetapi dicari
+  # (bisection) per rekaman sampai tinggi puncak air mendarat di target_frac * ambang banjir.
+  # Nilainya dicatat di saluran_<split>.csv.
+
+rain:
+  source: synthetic              # [BARU] synthetic | medan_real (belum diimplementasikan, lihat generate_drainase.py)
+  real_csv: null                 # [BARU] dipakai nanti bila source: medan_real
+  lead_idle_min: [150, 600]      # kering di awal (> konteks 120 menit)
+  tail_min: [180, 360]           # [UBAH] ekor surut tanpa hujan baru (k_slow sampai 400 menit)
+  dry_length_min: [1440, 2880]   # [BARU] panjang rekaman skenario kering
+  scenarios:
+    kering:
+      expect_cross: false
+      n_events: [0, 0]
+    hujan_ringan:
+      expect_cross: false
+      n_events: [2, 4]
+      duration_min: [30, 180]
+      peak_mm_h: [2, 8]
+      peak_pos: [0.3, 0.6]
+      min_gap_min: 120
+      log_noise_sigma: 0.4
+      target_frac: [0.25, 0.50]
+    hujan_sedang:
+      expect_cross: false
+      n_events: [2, 4]
+      duration_min: [60, 240]
+      peak_mm_h: [8, 25]
+      peak_pos: [0.3, 0.6]
+      min_gap_min: 120
+      log_noise_sigma: 0.4
+      target_frac: [0.55, 0.88]
+    hujan_lebat_singkat:
+      expect_cross: true
+      n_events: [1, 1]
+      duration_min: [20, 60]
+      peak_mm_h: [50, 120]
+      peak_pos: [0.15, 0.40]
+      min_gap_min: 180
+      log_noise_sigma: 0.5
+      target_frac: [1.08, 1.30]  # [UBAH] batas bawah 1.03 -> 1.08
+      extra: {n_events: [0, 2], duration_min: [30, 120], peak_mm_h: [5, 20]}
+    hujan_lama:
+      expect_cross: true
+      n_events: [1, 2]
+      duration_min: [240, 600]
+      peak_mm_h: [10, 30]
+      peak_pos: [0.3, 0.7]
+      min_gap_min: 120
+      log_noise_sigma: 0.6
+      target_frac: [1.08, 1.25]  # [UBAH]
+    hujan_beruntun:
+      expect_cross: true
+      n_events: [3, 5]
+      duration_min: [30, 120]
+      peak_mm_h: [15, 60]
+      peak_pos: [0.2, 0.5]
+      sequential: true
+      gap_min: [60, 240]
+      log_noise_sigma: 0.5
+      target_frac: [1.08, 1.30]  # [UBAH]
+    hujan_lebat_tertahan:
+      expect_cross: false
+      n_events: [1, 2]
+      duration_min: [20, 60]
+      peak_mm_h: [50, 100]
+      peak_pos: [0.15, 0.40]
+      min_gap_min: 180
+      log_noise_sigma: 0.5
+      target_frac: [0.70, 0.90]
+  noise_corr_min: 8              # [BARU] korelasi waktu noise intensitas hujan (menit)
+
+sensor:
+  blind_zone_cm: 20
+  max_range_cm: 450
+  noise_sigma_cm: [0.3, 1.0]
+  turbulence_sigma_cm: 0.6
+  ripple_fraction: 0.5           # [BARU] porsi noise berkorelasi (riak/angin) relatif terhadap noise putih
+  ripple_corr_min: 3             # [BARU]
+  calibration_bias_cm: 1.0
+  spike_prob: 0.002              # [UBAH] 0.005 -> 0.002 (asumsi: tiap menit = median beberapa ping)
+  dropout_prob: 0.003
+  burst_prob: 0.0004
+  burst_len_min: [3, 15]
+  burst_invalid_share: 0.6       # [BARU] porsi burst yang berupa pembacaan tidak valid (0), sisanya nilai ngawur
+  resolution_cm: 0.1
+  temp_mean_c: 28.0
+  temp_daily_amp_c: [2, 5]
+  temp_rain_drop_c: 3.0
+  temp_install_offset_c: 3.0
+  sound_speed_pct_per_c: 0.17
+
+cleaning:
+  max_jump_cm: 15
+  max_consecutive_rejects: 2
+  accept_after_invalid_run: 3

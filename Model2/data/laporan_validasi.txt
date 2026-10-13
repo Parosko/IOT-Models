@@ -1,0 +1,53 @@
+=== TRAIN ===
+rekaman: 140, baris: 194949, rata-rata panjang: 1392 menit (min 535, maks 2854), rekaman yang gagal memenuhi skenario: 0
+spike: 0.33%  dropout: 0.53%
+selisih data bersih vs asli: rata-rata 1.11 cm, persentil 95 2.66 cm, maks 143.28 cm
+porsi baris per fase: stabil 45.7%, surut 38.2%, naik 16.1%
+laju perubahan tinggi asli: persentil 99 1.86 cm/menit, maks 7.87 cm/menit (batas filter 15 cm/menit)
+kedalaman saluran: 52-149 cm; ambang banjir: 43-129 cm
+catchment_gain (kalibrasi): median 94.2
+                      rekaman  panjang_rata2  persen_lewat_ambang  puncak_per_ambang
+scenario                                                                            
+kering                     20        2241.05                  0.0               0.11
+hujan_ringan               20        1254.35                  0.0               0.38
+hujan_sedang               20        1525.65                  0.0               0.72
+hujan_lebat_singkat        20        1063.45                100.0               1.15
+hujan_lama                 20        1293.40                100.0               1.12
+hujan_beruntun             20        1455.95                100.0               1.16
+hujan_lebat_tertahan       20         913.60                  0.0               0.81
+
+=== VAL ===
+rekaman: 28, baris: 38445, rata-rata panjang: 1373 menit (min 502, maks 2642), rekaman yang gagal memenuhi skenario: 0
+spike: 0.35%  dropout: 0.49%
+selisih data bersih vs asli: rata-rata 1.34 cm, persentil 95 3.16 cm, maks 122.24 cm
+porsi baris per fase: stabil 43.5%, surut 40.3%, naik 16.2%
+laju perubahan tinggi asli: persentil 99 1.57 cm/menit, maks 7.72 cm/menit (batas filter 15 cm/menit)
+kedalaman saluran: 53-150 cm; ambang banjir: 44-134 cm
+catchment_gain (kalibrasi): median 137
+                      rekaman  panjang_rata2  persen_lewat_ambang  puncak_per_ambang
+scenario                                                                            
+kering                      4        2208.75                  0.0               0.09
+hujan_ringan                4        1158.25                  0.0               0.44
+hujan_sedang                4        1366.00                  0.0               0.71
+hujan_lebat_singkat         4        1235.50                100.0               1.16
+hujan_lama                  4        1623.50                100.0               1.14
+hujan_beruntun              4        1353.00                100.0               1.11
+hujan_lebat_tertahan        4         666.25                  0.0               0.78
+
+=== TEST ===
+rekaman: 28, baris: 39469, rata-rata panjang: 1410 menit (min 860, maks 2879), rekaman yang gagal memenuhi skenario: 0
+spike: 0.30%  dropout: 0.44%
+selisih data bersih vs asli: rata-rata 1.10 cm, persentil 95 2.66 cm, maks 106.62 cm
+porsi baris per fase: stabil 46.9%, surut 37.5%, naik 15.6%
+laju perubahan tinggi asli: persentil 99 1.62 cm/menit, maks 7.02 cm/menit (batas filter 15 cm/menit)
+kedalaman saluran: 56-146 cm; ambang banjir: 50-121 cm
+catchment_gain (kalibrasi): median 56
+                      rekaman  panjang_rata2  persen_lewat_ambang  puncak_per_ambang
+scenario                                                                            
+kering                      4        2258.75                  0.0               0.11
+hujan_ringan                4        1299.00                  0.0               0.43
+hujan_sedang                4        1585.50                  0.0               0.65
+hujan_lebat_singkat         4        1050.75                100.0               1.18
+hujan_lama                  4        1357.25                100.0               1.13
+hujan_beruntun              4        1338.00                100.0               1.19
+hujan_lebat_tertahan        4         978.00                  0.0               0.83
